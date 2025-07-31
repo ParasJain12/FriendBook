@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class UserService {
 	    }
 	    String namePart = cleaned.substring(0, Math.min(5, cleaned.length()));
 	    namePart = Character.toUpperCase(namePart.charAt(0)) + namePart.substring(1).toLowerCase();
-	    int numberPart = 100 + new Random().nextInt(900); // 3-digit number
+	    int numberPart = 100 + new Random().nextInt(900);
 	    return namePart + numberPart;
 	}
 
