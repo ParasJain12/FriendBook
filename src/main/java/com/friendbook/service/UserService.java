@@ -26,6 +26,10 @@ public class UserService {
 		user.setUsername(username);
 		return userRepository.save(user);
 	}
+	
+	public User updateUser(User user) {
+		return userRepository.save(user);
+	}
 
 	public String generateUsername(String fullName) {
 	    String cleaned = fullName.replaceAll("\\s+", "");
@@ -41,5 +45,13 @@ public class UserService {
 
 	public Optional<User> getByEmail(String email){
 		return userRepository.findByEmail(email);
+	}
+	
+	public int getFollowerCount(User user) {
+		return user.getFollowers().size();
+	}
+	
+	public int getFollowingCount(User user) {
+	    return user.getFollowing().size();
 	}
 }
