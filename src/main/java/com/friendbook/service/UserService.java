@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -53,5 +54,9 @@ public class UserService {
 	
 	public int getFollowingCount(User user) {
 	    return user.getFollowing().size();
+	}
+	
+	public User getById(Long id) {
+		return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with this id: "+id));
 	}
 }

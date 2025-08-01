@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.friendbook.model.User;
+import com.friendbook.service.FollowService;
 import com.friendbook.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +31,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private FollowService followService;
+	
 	@GetMapping
 	public String showProfilePage(Model model, Principal principal) {
 		Optional<User> userOpt = userService.getByEmail(principal.getName());
@@ -83,4 +88,43 @@ public class UserController {
 		}
 		return "redirect:/profile";
 	}
+	
+	@PostMapping("/follow/{id}")
+	public String followUser(@PathVariable Long id, Principal principal) {
+		User follower = userService.getByEmail(principal.getName()).orElseThrow();
+		User following = userService.getById(id);
+		followService.follow(follower,following);
+		return "redirect:/user/" + id;
+	}
+	
+	@PostMapping("/unfollow/{id}")
+	public String unfollowUser(@PathVariable Long id, Principal principal) {
+		User follower = userService.getByEmail(principal.getName()).orElseThrow();
+		User following = userService.getById(id);
+		followService.unfollow(follower,following);
+		return "redirect:/user/" + id;
+	}
+	
+	@GetMapping("/user/{id}")
+    public String viewUserProfile(@PathVariable Long id, Principal principal, Model model) {
+
+        User user = userService.getById(id);
+        if (user == null) {
+            return "redirect:/error"; 
+        }
+
+        User currentUser = userService.getByEmail(principal.getName()).orElseThrow();
+
+        boolean isFollowing = followService.isFollowing(currentUser, user);
+        long followerCount = followService.countFollowers(user);
+        long followingCount = followService.countFollowing(user);
+
+        model.addAttribute("user", user);
+        model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
+
+        return "user-profile";
+    }
+
 }

@@ -27,8 +27,7 @@ public class SecurityConfiguration {
 		http
 		   .csrf().disable()
 		   .authorizeHttpRequests(auth -> auth
-				   .requestMatchers("/","/signup","/login").permitAll()
-				   .anyRequest().authenticated())
+				   .anyRequest().permitAll())
 		   .formLogin(form -> form
 				   .loginPage("/login")
 				   .loginProcessingUrl("/do-login")
